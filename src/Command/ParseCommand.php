@@ -23,9 +23,30 @@ class ParseCommand extends Command
 
         if ($finder->hasResults()) {
             foreach ($finder as $file) {
-                $output->writeln($file->getRelativePathname());
+                $contents = $file->getContents();
+                $extension = $file->getExtension();
+                $output->writeln($file->getRelativePathName());
+                if ($extension == "json")
+                {
+                    $dependencies = $this->get_json_dependencies($contents);
+                }
+                else
+                {
+                    $dependencies = $this->get_lock_dependencies($contents);
+                }
+                $output->writeln($dependencies);
             }
         }
         return 0;
+    }
+
+    function get_json_dependencies($fileContent)
+    {
+        return "json";
+    }
+
+    function get_lock_dependencies($fileContent)
+    {
+        return "lock";
     }
 }
