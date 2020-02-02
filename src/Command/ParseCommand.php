@@ -26,12 +26,9 @@ class ParseCommand extends Command
                 $contents = $file->getContents();
                 $extension = $file->getExtension();
                 $output->writeln($file->getRelativePathName());
-                if ($extension == "json")
-                {
+                if ($extension == "json") {
                     $dependencies = $this->get_json_dependencies($contents);
-                }
-                else
-                {
+                } else {
                     $dependencies = $this->get_lock_dependencies($contents);
                 }
                 $output->writeln($dependencies);
@@ -40,12 +37,16 @@ class ParseCommand extends Command
         return 0;
     }
 
-    function get_json_dependencies($fileContent)
+    public function get_json_dependencies($fileContent)
     {
-        return "json";
+        $contentAsJson = json_decode($fileContent, true);
+        foreach ($contentAsJson["dependencies"] as $x => $x_value) {
+            echo "Key=" . $x . ", Value=" . $x_value;
+        }
+        return "";
     }
 
-    function get_lock_dependencies($fileContent)
+    public function get_lock_dependencies($fileContent)
     {
         return "lock";
     }
