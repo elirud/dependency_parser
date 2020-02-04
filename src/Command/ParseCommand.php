@@ -8,6 +8,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\String\UnicodeString;
+use Symfony\Component\Console\Input\InputOption;
 use function Symfony\Component\String\u;
 
 class ParseCommand extends Command
@@ -17,15 +18,19 @@ class ParseCommand extends Command
     protected function configure()
     {
         $this->setDescription('Parse file(s) for dependencies.');
+        $this->addOption('dir', null, InputOption::VALUE_REQUIRED,
+        'Which directory to search for files to parse for dependencies',
+        ".\public\\files");
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $finder = new Finder();
         $table = new Table($output);
+        $table->setStyle('box-double');
         $table->setHeaders(['Product', 'Version']);
         $rows = array();
-        $finder->files()->in(".\public\\files");
+        $finder->files()->in($input->getOption('dir'));
 
         if ($finder->hasResults()) {
             $output->writeln("Dependencies found for:");
