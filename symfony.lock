@@ -145,7 +145,13 @@
             "./config/packages/test/monolog.yaml"
         ]
     },
+    "symfony/polyfill-intl-grapheme": {
+        "version": "v1.13.1"
+    },
     "symfony/polyfill-intl-idn": {
+        "version": "v1.13.1"
+    },
+    "symfony/polyfill-intl-normalizer": {
         "version": "v1.13.1"
     },
     "symfony/polyfill-mbstring": {
@@ -169,6 +175,12 @@
         ]
     },
     "symfony/service-contracts": {
+        "version": "v2.0.1"
+    },
+    "symfony/string": {
+        "version": "v5.0.4"
+    },
+    "symfony/translation-contracts": {
         "version": "v2.0.1"
     },
     "symfony/var-dumper": {
