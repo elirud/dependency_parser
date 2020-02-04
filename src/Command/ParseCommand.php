@@ -10,7 +10,6 @@ use Symfony\Component\Finder\Finder;
 use Symfony\Component\String\UnicodeString;
 use function Symfony\Component\String\u;
 
-
 class ParseCommand extends Command
 {
     protected static $defaultName = 'app:parse-files';
@@ -25,7 +24,7 @@ class ParseCommand extends Command
         $finder = new Finder();
         $table = new Table($output);
         $table->setHeaders(['Product', 'Version']);
-        $rows = array(['Initial', 'Commit']);
+        $rows = array();
         $finder->files()->in(".\public\\files");
 
         if ($finder->hasResults()) {
@@ -43,6 +42,7 @@ class ParseCommand extends Command
                 }
                 $table->setRows($rows);
                 $table->render();
+                $rows = [];
             }
         }
         return 0;
@@ -59,7 +59,16 @@ class ParseCommand extends Command
 
     public function get_lock_dependencies($fileContent, $rows)
     {
-        echo u($fileContent);
+        $lockDependencies = u($fileContent)
+                            ->slice(u($fileContent)->indexOf('DEPENDENCIES'));
+        $lockDependencies = u($lockDependencies)
+                            ->slice(13, u($lockDependencies)
+                            ->indexOf("\n\n") - 13);
+        foreach (u($lockDependencies)->split("\n") as $row) {
+            array_push($rows, new TableSeparator(), u($row)
+                                                    ->trimStart()
+                                                    ->split(" ", 2));
+        }
         return $rows;
     }
 }
