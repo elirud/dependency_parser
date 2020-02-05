@@ -53,7 +53,7 @@ class ParseCommand extends Command
                     $table->setRows($rows);
                     $table->render();
                     $rows = [];
-                } else{
+                } else {
                     $output->writeln("No dependencies found for "
                                     .$fileName . ".");
                 }
@@ -79,15 +79,14 @@ class ParseCommand extends Command
 
     public function get_lock_dependencies($fileContent, $rows)
     {
-        if(strpos($fileContent, 'DEPENDENCIES') == false) {
+        if (strpos($fileContent, 'DEPENDENCIES') == false) {
             return $rows;
         }
+
         $lockDependencies = u($fileContent)
-                            ->slice(u($fileContent)->indexOf('DEPENDENCIES'));
-        $lockDependencies = u($lockDependencies)
-                            ->slice(13, u($lockDependencies)
-                            ->indexOf("\n\n") - 13);
-        if(u($lockDependencies)->collapseWhitespace()->isEmpty()) {
+                            ->after('DEPENDENCIES')->before("\n\n");
+
+        if (u($lockDependencies)->collapseWhitespace()->isEmpty()) {
             return $rows;
         }
         foreach (u($lockDependencies)->split("\n") as $row) {
