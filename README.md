@@ -6,7 +6,8 @@ git clone https://github.com/elirud/dependency_parser.git
 ```
 
 ## Requirements
-Requirements to run Symfony applications can be found [here](https://symfony.com/doc/4.2/reference/requirements.html)
+Requirements to run Symfony applications can be found [here.](https://symfony.com/doc/4.2/reference/requirements.html)
+Note that this command can only handle .json and .lock files.
 
 ## Running the command
 To use the command, navigate to the dependency-parser directory and run
