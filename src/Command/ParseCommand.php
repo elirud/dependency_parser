@@ -18,9 +18,13 @@ class ParseCommand extends Command
     protected function configure()
     {
         $this->setDescription('Parse file(s) for dependencies.');
-        $this->addOption('dir', null, InputOption::VALUE_REQUIRED,
-        'Which directory to search for files to parse for dependencies',
-        ".\public\\files");
+        $this->addOption(
+            'dir',
+            null,
+            InputOption::VALUE_REQUIRED,
+            'Which directory to search for files to parse for dependencies',
+            ".\public\\files"
+        );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -45,10 +49,18 @@ class ParseCommand extends Command
                     $rows = $this->get_lock_dependencies($contents, $rows);
                     $table->setHeaderTitle($fileName);
                 }
-                $table->setRows($rows);
-                $table->render();
-                $rows = [];
+                if (!empty($rows)) {
+                    $table->setRows($rows);
+                    $table->render();
+                    $rows = [];
+                } else{
+                    $output->writeln("No dependencies found for "
+                                    .$fileName . ".");
+                }
             }
+        } else {
+            $output->writeln("No files found in the ".$input->getOption('dir').
+                            ' directory.');
         }
         return 0;
     }
@@ -56,6 +68,9 @@ class ParseCommand extends Command
     public function get_json_dependencies($fileContent, $rows)
     {
         $contentAsJson = json_decode($fileContent, true);
+        if (!isset($contentAsJson["dependencies"])) {
+            return $rows;
+        }
         foreach ($contentAsJson["dependencies"] as $product => $version) {
             array_push($rows, new TableSeparator(), [$product, $version]);
         }
@@ -64,11 +79,17 @@ class ParseCommand extends Command
 
     public function get_lock_dependencies($fileContent, $rows)
     {
+        if(strpos($fileContent, 'DEPENDENCIES') == false) {
+            return $rows;
+        }
         $lockDependencies = u($fileContent)
                             ->slice(u($fileContent)->indexOf('DEPENDENCIES'));
         $lockDependencies = u($lockDependencies)
                             ->slice(13, u($lockDependencies)
                             ->indexOf("\n\n") - 13);
+        if(u($lockDependencies)->collapseWhitespace()->isEmpty()) {
+            return $rows;
+        }
         foreach (u($lockDependencies)->split("\n") as $row) {
             array_push($rows, new TableSeparator(), u($row)
                                                     ->trimStart()
