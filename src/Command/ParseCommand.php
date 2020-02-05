@@ -35,7 +35,8 @@ class ParseCommand extends Command
         $table->setStyle('box-double');
         $table->setHeaders(['Product', 'Version']);
         $rows = array();
-        $finder->files()->in($input->getOption('dir'));
+        $finder->files()->in($input->getOption('dir'))
+                        ->name('/^.*\.(lock|json)$/');
 
         if ($finder->hasResults()) {
             $output->writeln("Dependencies found for:");
